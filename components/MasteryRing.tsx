@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 
 type Props = {
   value: number;
@@ -22,6 +21,10 @@ function ringColor(value: number): string {
   return "var(--error)";
 }
 
+/**
+ * CSS-only ring + pulse. Framer Motion stroke springs were instrumented by
+ * React DevTools on every mastery tick and contributed to click crashes.
+ */
 export default function MasteryRing({
   value,
   size = 56,
@@ -29,11 +32,7 @@ export default function MasteryRing({
   showLabel,
 }: Props) {
   const [display, setDisplay] = useState(value);
-  // Bumped on every live event so the pulse replays, including when the value
-  // happens to land back where it started.
-  const [pulseKey, setPulseKey] = useState(0);
-  // Suppresses the pulse for the first render, where `display` is seeded from
-  // the server value rather than earned during this visit.
+  const [pulse, setPulse] = useState(false);
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -52,7 +51,8 @@ export default function MasteryRing({
       ) {
         setDisplay(detail.mastery);
         if (!isFirstRender.current) {
-          setPulseKey((k) => k + 1);
+          setPulse(true);
+          window.setTimeout(() => setPulse(false), 400);
         }
         isFirstRender.current = false;
       }
@@ -69,13 +69,8 @@ export default function MasteryRing({
   const offset = circumference * (1 - clamped);
 
   return (
-    <motion.div
-      className="flex flex-col items-center"
-      // One short pop on each live gain, so the update reads as a reward
-      // rather than a silent number change.
-      animate={{ scale: [1, 1.05, 1] }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      key={pulseKey}
+    <div
+      className={`flex flex-col items-center ${pulse ? "mastery-ring-pulse" : ""}`}
     >
       <svg
         width={size}
@@ -93,7 +88,8 @@ export default function MasteryRing({
           stroke="var(--bg-subtle)"
           strokeWidth={stroke}
         />
-        <motion.circle
+        <circle
+          className="mastery-ring-arc"
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -102,10 +98,11 @@ export default function MasteryRing({
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ type: "spring", stiffness: 100, damping: 22, duration: 0.6 }}
-          style={{ transform: `rotate(-90deg)`, transformOrigin: "center" }}
+          strokeDashoffset={offset}
+          style={{
+            transform: "rotate(-90deg)",
+            transformOrigin: "center",
+          }}
         />
         <text
           x="50%"
@@ -125,6 +122,6 @@ export default function MasteryRing({
           Mastery
         </span>
       )}
-    </motion.div>
+    </div>
   );
 }

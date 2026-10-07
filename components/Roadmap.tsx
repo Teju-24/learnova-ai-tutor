@@ -327,7 +327,7 @@ export default function Roadmap({
                   type="button"
                   className={`absolute flex items-center justify-center rounded-full ${
                     isLocked ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
+                  } ${status === "current" ? "scale-pulse" : ""}`}
                   style={{
                     left: point.x - STOP_SIZE / 2,
                     top: point.y - STOP_SIZE / 2,
@@ -349,15 +349,10 @@ export default function Roadmap({
                     isLocked ? `${title} — complete earlier concepts to unlock` : `${title} — ${STATUS_LABEL[status]}`
                   }
                   initial={{ opacity: 0, scale: 0.6 }}
-                  animate={
-                    status === "current"
-                      ? { opacity: 1, scale: [1, 1.08, 1] }
-                      : { opacity: 1, scale: 1 }
-                  }
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{
                     delay: 0.4 + index * 0.06,
-                    duration: status === "current" ? 1.8 : 0.25,
-                    repeat: status === "current" ? Infinity : 0,
+                    duration: 0.25,
                   }}
                 >
                   <Icon size={20} strokeWidth={isLocked ? 2 : 2.5} />

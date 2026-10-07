@@ -294,12 +294,12 @@ export default function ReviewSession({ items }: Props) {
         aria-valuenow={step + 1}
         aria-label="Review progress"
       >
-        <motion.div
-          className="h-full rounded-full"
-          style={{ backgroundColor: "var(--primary)" }}
-          initial={false}
-          animate={{ width: `${((step + (outcome ? 1 : 0)) / total) * 100}%` }}
-          transition={{ type: "spring", stiffness: 260, damping: 30 }}
+        <div
+          className="progress-fill h-full rounded-full"
+          style={{
+            backgroundColor: "var(--primary)",
+            width: `${((step + (outcome ? 1 : 0)) / total) * 100}%`,
+          }}
         />
       </div>
 

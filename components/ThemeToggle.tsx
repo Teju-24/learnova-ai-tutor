@@ -7,10 +7,14 @@ type Theme = "light" | "dark";
 
 const STORAGE_KEY = "theme";
 
+/** Always mutate <html>, never a page wrapper — CSS tokens live on :root. */
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
-  if (theme === "dark") root.setAttribute("data-theme", "dark");
-  else root.removeAttribute("data-theme");
+  if (theme === "dark") {
+    root.setAttribute("data-theme", "dark");
+  } else {
+    root.removeAttribute("data-theme");
+  }
 }
 
 /**

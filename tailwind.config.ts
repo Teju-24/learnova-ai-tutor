@@ -1,10 +1,13 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Semantic colors resolve through CSS variables so toggling
+ * data-theme="dark" on <html> rethemes every utility class.
+ */
 const config: Config = {
   content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -13,37 +16,44 @@ const config: Config = {
         bgcard: "var(--bg-card)",
         bgsubtle: "var(--bg-subtle)",
         bgcode: "var(--bg-code)",
+        bgnav: "var(--bg-nav)",
         ink: "var(--ink)",
         inkmuted: "var(--ink-muted)",
         inkfaint: "var(--ink-faint)",
-        primary: "var(--primary)",
-        "primary-hover": "var(--primary-hover)",
-        "primary-soft": "var(--primary-soft)",
-        success: "var(--success)",
-        "success-soft": "var(--success-soft)",
-        warning: "var(--warning)",
-        "warning-soft": "var(--warning-soft)",
-        error: "var(--error)",
-        "error-soft": "var(--error-soft)",
-        gold: "var(--gold)",
-        "gold-soft": "var(--gold-soft)",
+        inkfaded: "var(--ink-muted)",
+        primary: {
+          DEFAULT: "var(--primary)",
+          hover: "var(--primary-hover)",
+          soft: "var(--primary-soft)",
+        },
+        success: {
+          DEFAULT: "var(--success)",
+          soft: "var(--success-soft)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          soft: "var(--warning-soft)",
+        },
+        error: {
+          DEFAULT: "var(--error)",
+          soft: "var(--error-soft)",
+        },
+        gold: {
+          DEFAULT: "var(--gold)",
+          soft: "var(--gold-soft)",
+        },
         streak: "var(--streak)",
         sparks: "var(--sparks)",
-        /* Activity accents are read through the CSS variable in most places;
-         * this mapping is for the Tailwind-class callers. */
-        acodeeditor: "var(--a-code-editor)",
-        /* Legacy aliases so pre-redesign pages/components keep resolving
-         * against the new palette. */
-        paper: "var(--paper)",
-        paperdark: "var(--paper-dark)",
-        linen: "var(--paper-linen)",
-        cork: "var(--cork)",
-        inkfaded: "var(--ink-faded)",
-        terracotta: "var(--terracotta)",
-        walnut: "var(--walnut)",
-        moss: "var(--moss)",
-        sage: "var(--sage)",
-        brass: "var(--brass)",
+        // Legacy aliases used by auth / start pages
+        paper: "var(--bg-card)",
+        paperdark: "var(--bg-subtle)",
+        linen: "var(--bg-page)",
+        cork: "var(--bg-subtle)",
+        walnut: "var(--ink-faint)",
+        terracotta: "var(--error)",
+        moss: "var(--success)",
+        sage: "var(--success-soft)",
+        brass: "var(--warning)",
       },
       fontFamily: {
         heading: "var(--font-heading)",
@@ -61,4 +71,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;

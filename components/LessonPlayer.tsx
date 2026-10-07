@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -1399,13 +1398,11 @@ export default function LessonPlayer({
             Question {currentIndex + 1} <span className="text-inkfaint">of {testLength}</span>
           </p>
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-bgsubtle">
-            <motion.div
-              className="h-full rounded-full bg-primary"
-              initial={{ width: 0 }}
-              animate={{
+            <div
+              className="progress-fill h-full rounded-full bg-primary"
+              style={{
                 width: `${testLength === 0 ? 0 : ((currentIndex + 1) / testLength) * 100}%`,
               }}
-              transition={{ type: "spring", stiffness: 120, damping: 22 }}
             />
           </div>
         </div>
@@ -1531,11 +1528,7 @@ export default function LessonPlayer({
             </p>
           </div>
         ) : passed ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 22 }}
-          >
+          <div className="modal-panel">
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft">
               <Trophy size={32} className="text-success" />
             </span>
@@ -1545,13 +1538,9 @@ export default function LessonPlayer({
             <p className="mt-3 font-heading text-[56px] leading-none text-success">
               {pct}%
             </p>
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 22 }}
-          >
+          <div className="modal-panel">
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-error-soft">
               <Target size={32} className="text-error" />
             </span>
@@ -1563,7 +1552,7 @@ export default function LessonPlayer({
               You scored {correctCount} of {totalQuestions}. The answer key
               below shows what to revisit.
             </p>
-          </motion.div>
+          </div>
         )}
 
         {(testResult.sparks > 0 || timeTakenSec > 0 || !isStoredResult) && (
@@ -1767,11 +1756,9 @@ export default function LessonPlayer({
               </p>
             </div>
             <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-bgsubtle">
-              <motion.div
-                className="h-full rounded-full bg-primary"
-                initial={{ width: `${total === 0 ? 0 : ((step) / total) * 100}%` }}
-                animate={{ width: `${total === 0 ? 0 : ((step + 1) / total) * 100}%` }}
-                transition={{ type: "spring", stiffness: 120, damping: 24 }}
+              <div
+                className="progress-fill h-full rounded-full bg-primary"
+                style={{ width: `${total === 0 ? 0 : ((step + 1) / total) * 100}%` }}
               />
             </div>
           </div>

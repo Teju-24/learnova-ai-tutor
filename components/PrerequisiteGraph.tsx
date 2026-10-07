@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { isConceptUnlocked } from "@/lib/learner";
 
 /**
@@ -245,16 +245,14 @@ export default function PrerequisiteGraph({
                 <title>{concept.title}</title>
 
                 {current && !reduced && (
-                  <motion.circle
+                  <circle
+                    className="ring-pulse"
                     cx={x}
                     cy={y}
                     r={NODE_R}
                     fill="none"
                     stroke="var(--primary)"
                     strokeWidth={2}
-                    initial={{ opacity: 0.55, scale: 1 }}
-                    animate={{ opacity: 0, scale: 1.45 }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
                     style={{ transformOrigin: `${x}px ${y}px` }}
                   />
                 )}

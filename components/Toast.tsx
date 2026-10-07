@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles, Trophy } from "lucide-react";
 
 export type ToastVariant = "default" | "badge" | "spark";
@@ -11,8 +10,14 @@ type ToastDetail = {
   variant?: ToastVariant;
 };
 
-type ToastItem = ToastDetail & { id: number };
+type ToastItem = ToastDetail & { id: number; leaving?: boolean };
 
+const EXIT_MS = 200;
+
+/**
+ * Toasts use CSS enter/exit classes only — no Framer Motion springs.
+ * Springs under React DevTools previously crashed Chrome on fireToast().
+ */
 export default function Toast() {
   const [items, setItems] = useState<ToastItem[]>([]);
 
@@ -25,7 +30,12 @@ export default function Toast() {
       setItems((prev) => [...prev, { id, message: detail.message, variant }]);
       const duration = variant === "badge" ? 5000 : 3000;
       window.setTimeout(() => {
-        setItems((prev) => prev.filter((t) => t.id !== id));
+        setItems((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, leaving: true } : t))
+        );
+        window.setTimeout(() => {
+          setItems((prev) => prev.filter((t) => t.id !== id));
+        }, EXIT_MS);
       }, duration);
     }
     window.addEventListener("learnova:toast", onToast);
@@ -37,47 +47,37 @@ export default function Toast() {
       className="pointer-events-none fixed bottom-6 left-1/2 z-[60] flex -translate-x-1/2 flex-col gap-2"
       aria-live="polite"
     >
-      <AnimatePresence>
-        {items.map((item) => {
-          const isBadge = item.variant === "badge";
-          const isSpark = item.variant === "spark";
+      {items.map((item) => {
+        const isBadge = item.variant === "badge";
+        const isSpark = item.variant === "spark";
 
-          return (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 28 }}
-              className={`pointer-events-auto flex items-center gap-2.5 rounded-lg px-4 py-3 text-sm font-semibold shadow-xl ${
-                isBadge
-                  ? "text-ink"
-                  : isSpark
-                    ? "text-white"
-                    : "text-white"
-              }`}
-              style={{
-                backgroundColor: isBadge
-                  ? "var(--gold-soft)"
-                  : isSpark
-                    ? "var(--sparks)"
-                    : "var(--ink)",
-                border: isBadge ? "1px solid rgba(245,158,11,0.35)" : "none",
-              }}
-            >
-              {isBadge && <Trophy size={16} className="text-gold" />}
-              {isSpark && <Sparkles size={16} />}
-              {!isBadge && !isSpark ? (
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: "var(--success)" }}
-                />
-              ) : null}
-              {item.message}
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
+        return (
+          <div
+            key={item.id}
+            className={`toast-item pointer-events-auto flex items-center gap-2.5 rounded-lg px-4 py-3 text-sm font-semibold shadow-xl ${
+              item.leaving ? "toast-item-exit" : "toast-item-enter"
+            } ${isBadge ? "text-ink" : "text-white"}`}
+            style={{
+              backgroundColor: isBadge
+                ? "var(--gold-soft)"
+                : isSpark
+                  ? "var(--sparks)"
+                  : "var(--ink)",
+              border: isBadge ? "1px solid rgba(245,158,11,0.35)" : "none",
+            }}
+          >
+            {isBadge && <Trophy size={16} className="text-gold" />}
+            {isSpark && <Sparkles size={16} />}
+            {!isBadge && !isSpark ? (
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: "var(--success)" }}
+              />
+            ) : null}
+            {item.message}
+          </div>
+        );
+      })}
     </div>
   );
 }

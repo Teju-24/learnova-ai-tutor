@@ -22,14 +22,14 @@ export default function SpeakButton({ text }: { text: string }) {
   }, []);
 
   // Stop whatever is playing when this button leaves the page or the section's
-  // text changes underneath it.
+  // text changes underneath it. Do NOT call setState in cleanup — that races
+  // unmount and can thrash under React DevTools.
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
       utteranceRef.current = null;
-      setStatus("idle");
     };
   }, [text]);
 
